@@ -5,6 +5,7 @@ from aiogram import Bot, Dispatcher, types
 from aiogram.filters import Command
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from flask import Flask
+import threading
 
 app = Flask(__name__)
 
@@ -33,14 +34,18 @@ async def send_card(message: types.Message):
     text = "Привет! Ссылки на соцсети mmmmisl_m💥 можете найти ниже ⬇️"
     await message.answer(text=text, reply_markup=keyboard)
 
+# Функция для запуска бота
 async def start_bot():
     await dp.start_polling(bot)
 
+# Функция, которая запускает бота в отдельном потоке
+def run_bot():
+    asyncio.run(start_bot())
+
 if __name__ == "__main__":
-    # Запускаем бота в фоне
-    loop = asyncio.new_event_loop()
-    asyncio.set_event_loop(loop)
-    import threading
-    threading.Thread(target=lambda: loop.run_until_complete(start_bot()), daemon=True).start()
+    # Запускаем бота в фоновом потоке
+    bot_thread = threading.Thread(target=run_bot, daemon=True)
+    bot_thread.start()
+    
     # Запускаем Flask
     app.run(host="0.0.0.0", port=10000)
