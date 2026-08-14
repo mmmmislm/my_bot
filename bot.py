@@ -4,14 +4,23 @@ import logging
 from aiogram import Bot, Dispatcher, types
 from aiogram.filters import Command
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
+from flask import Flask
 
+# --- Flask для Render ---
+app = Flask(__name__)
+
+@app.route('/')
+def health_check():
+    return "Бот работает!"
+
+# --- Сам бот ---
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 
 logging.basicConfig(level=logging.INFO)
 bot = Bot(token=BOT_TOKEN)
 dp = Dispatcher()
 
-# ВСЕ ТВОИ СОЦСЕТИ В КНОПКАХ
+# Кнопки
 keyboard = InlineKeyboardMarkup(inline_keyboard=[
     [InlineKeyboardButton(text="🤟 Telegram-канал", url="https://t.me/mmmmisl_m_channel")],
     [InlineKeyboardButton(text="📸 Instagram", url="https://www.instagram.com/mmmmisl_m?igsh=dm1pNm5xMGc5OTli&utm_source=qr")],
@@ -26,8 +35,11 @@ async def send_card(message: types.Message):
     text = "Привет! Ссылки на соцсети mmmmisl_m💥 можете найти ниже ⬇️"
     await message.answer(text=text, reply_markup=keyboard)
 
-async def main():
+async def start_bot():
     await dp.start_polling(bot)
 
+# --- Запуск ---
 if __name__ == "__main__":
-    asyncio.run(main())
+    import threading
+    threading.Thread(target=lambda: asyncio.run(start_bot())).start()
+    app.run(host="0.0.0.0", port=10000)
