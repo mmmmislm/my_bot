@@ -1,11 +1,11 @@
+import os
 import asyncio
 import logging
 from aiogram import Bot, Dispatcher, types
 from aiogram.filters import Command
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
-# СЮДА ВСТАВЬ СВОЙ ТОКЕН
-BOT_TOKEN = "8875709967:AAFuA1MvBOH5gfpHuedFuXLrZmrGuouVDQI"
+BOT_TOKEN = os.getenv("BOT_TOKEN")
 
 logging.basicConfig(level=logging.INFO)
 bot = Bot(token=BOT_TOKEN)
@@ -23,13 +23,8 @@ keyboard = InlineKeyboardMarkup(inline_keyboard=[
 
 @dp.message(Command("start"))
 async def send_card(message: types.Message):
-    text = (
-        "Привет! Ссылки на соцсети mmmmisl_m💥 можете найти ниже ⬇️"
-    )
-    await message.answer(
-        text=text,
-        reply_markup=keyboard
-    )
+    text = "Привет! Ссылки на соцсети mmmmisl_m💥 можете найти ниже ⬇️"
+    await message.answer(text=text, reply_markup=keyboard)
 
 async def main():
     await dp.start_polling(bot)
